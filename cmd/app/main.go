@@ -11,9 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ava-labs/avalanchego/app"
-	"github.com/ava-labs/avalanchego/config"
-	"github.com/ava-labs/avalanchego/node"
+	"github.com/ava-labs/avalanchego/app"    //nolint:depguard
+	"github.com/ava-labs/avalanchego/config" //nolint:depguard
+	"github.com/ava-labs/avalanchego/node"   //nolint:depguard
 	"golang.org/x/sync/errgroup"
 )
 
@@ -136,8 +136,7 @@ func main() {
 }
 
 func startApp(wg *sync.WaitGroup, config node.Config) {
-	err := runApp(wg, config)
-	if err != nil {
+	if err := runApp(wg, config); err != nil {
 		log.Println("err", err)
 	}
 }
@@ -196,7 +195,6 @@ func createNodeConfig(args []string) (node.Config, error) {
 
 // Flags represents available CLI flags when starting a node
 type Flags struct {
-
 	// Version
 	Version bool
 
