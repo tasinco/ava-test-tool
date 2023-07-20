@@ -38,3 +38,4 @@ linters:
     - gochecknoinits
     - cyclop
     - nestif
+    - depguard

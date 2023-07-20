@@ -11,9 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ava-labs/avalanchego/app"    //nolint:depguard
-	"github.com/ava-labs/avalanchego/config" //nolint:depguard
-	"github.com/ava-labs/avalanchego/node"   //nolint:depguard
+	"github.com/ava-labs/avalanchego/app"
+	"github.com/ava-labs/avalanchego/config"
+	"github.com/ava-labs/avalanchego/node"
 	"golang.org/x/sync/errgroup"
 )
 
