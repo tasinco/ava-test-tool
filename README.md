@@ -41,3 +41,7 @@ func main() {
 	log.Println(chainID)
 }
 ```
+
+## Test deploy
+
+[revertdeploy](reverterdeploy) deploys the reverted contract and test some calls.
