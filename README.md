@@ -1,6 +1,8 @@
 # ava-test-tool
 
-Start a 5 node Ava testing environment.
+Start a local net 5 node Avalanche testing environment.
+
+Deploy and test solidity contracts on a live local EVM.
 
 ## Howto run
 
