@@ -10,14 +10,13 @@ import (
 	"time"
 
 	"github.com/ava-labs/avalanchego/utils/constants"
-	"github.com/ava-labs/avalanchego/utils/formatting/address"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/rpc"
+	avaprvatekey "github.com/tasinco/ava-test-tool/avalanche/privatekey"
 	"github.com/tasinco/ava-test-tool/contracts/reverter"
 	"github.com/tasinco/ava-test-tool/ethcalls"
 )
@@ -38,43 +37,21 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// private key from certs for ava local network
-	privateKey, err := crypto.HexToECDSA("56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027")
-	if err != nil {
-		log.Fatal(err)
-	}
-	addr := crypto.PubkeyToAddress(privateKey.PublicKey)
-	avaxAddr, err := address.FormatBech32(Bech32HRP, addr.Bytes())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// private key from certs for ava local network
-	privateKey2, err := crypto.HexToECDSA("56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccd558d8027")
-	if err != nil {
-		log.Fatal(err)
-	}
-	addr2 := crypto.PubkeyToAddress(privateKey2.PublicKey)
-	avaxAddr2, err := address.FormatBech32(Bech32HRP, addr2.Bytes())
+	pkInfo, err := avaprvatekey.DecodeB32("PrivateKey-ewoqjP7PxY4yr3iLTpLisriqt94hdyDFNgchSxGGztUrTXtNN", constants.LocalID)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// check balances
-	addr1bal, err := ethClnt.BalanceAt(ctx, addr, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	addr2bal, err := ethClnt.BalanceAt(ctx, addr2, nil)
+	addr1bal, err := ethClnt.BalanceAt(ctx, pkInfo.Caddr, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println("addr", avaxAddr, addr1bal, addr.String())
-	log.Println("addr2", avaxAddr2, addr2bal, addr2.String())
+	log.Println("addr", addr1bal, pkInfo.Caddr)
 
 	// deploy the contract
-	reverterContractAddr, rtx, reverter, err := reverter.DeployReverter(getAuth(ctx, privateKey, chainID), ethClnt)
+	reverterContractAddr, rtx, reverter, err := reverter.DeployReverter(getAuth(ctx, pkInfo.PrivKeyECDSA, chainID), ethClnt)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -83,14 +60,14 @@ func main() {
 	log.Println("reverterContractAddr", reverterContractAddr.String())
 
 	// disable receive
-	tx, err := reverter.SetEnableReceive(getAuth(ctx, privateKey, chainID), new(big.Int))
+	tx, err := reverter.SetEnableReceive(getAuth(ctx, pkInfo.PrivKeyECDSA, chainID), new(big.Int))
 	if err != nil {
 		log.Fatal(err)
 	}
 	_, _ = waitForTx(ctx, "revert disable", ethClnt, tx.Hash())
 
 	// send some money
-	gasPrice, signedTx, err := doSend(ethClnt, ctx, addr, new(big.Int).SetUint64((1)*params.Ether), reverterContractAddr, chainID, privateKey)
+	gasPrice, signedTx, err := doSend(ethClnt, ctx, pkInfo.Caddr, new(big.Int).SetUint64((1)*params.Ether), reverterContractAddr, chainID, pkInfo.PrivKeyECDSA)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -98,11 +75,7 @@ func main() {
 	_, _ = waitForTx(ctx, "receive", ethClnt, signedTx.Hash())
 
 	// check balances
-	addr1bal, err = ethClnt.BalanceAt(ctx, addr, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	addr2bal, err = ethClnt.BalanceAt(ctx, addr2, nil)
+	addr1bal, err = ethClnt.BalanceAt(ctx, pkInfo.Caddr, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -111,8 +84,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println("addr", avaxAddr, addr1bal, addr.String())
-	log.Println("addr2", avaxAddr2, addr2bal, addr2.String())
+	log.Println("addr", addr1bal, pkInfo.Caddr)
 	log.Println("contract balance", rContractBal)
 
 	// debug the trace (it will revert)
@@ -123,14 +95,14 @@ func main() {
 	log.Println(toJson(&c))
 
 	// re-enable the contract
-	tx, err = reverter.SetEnableReceive(getAuth(ctx, privateKey, chainID), new(big.Int).SetInt64(1))
+	tx, err = reverter.SetEnableReceive(getAuth(ctx, pkInfo.PrivKeyECDSA, chainID), new(big.Int).SetInt64(1))
 	if err != nil {
 		log.Fatal(err)
 	}
 	_, _ = waitForTx(ctx, "revert disable", ethClnt, tx.Hash())
 
 	// send more money
-	gasPrice, signedTx, err = doSend(ethClnt, ctx, addr, new(big.Int).SetUint64((1*params.Ether)+12345), reverterContractAddr, chainID, privateKey)
+	gasPrice, signedTx, err = doSend(ethClnt, ctx, pkInfo.Caddr, new(big.Int).SetUint64((1*params.Ether)+12345), reverterContractAddr, chainID, pkInfo.PrivKeyECDSA)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -138,11 +110,7 @@ func main() {
 	_, _ = waitForTx(ctx, "receive", ethClnt, signedTx.Hash())
 
 	// re-check balances
-	addr1bal, err = ethClnt.BalanceAt(ctx, addr, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	addr2bal, err = ethClnt.BalanceAt(ctx, addr2, nil)
+	addr1bal, err = ethClnt.BalanceAt(ctx, pkInfo.Caddr, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -151,8 +119,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println("addr", avaxAddr, addr1bal, addr.String())
-	log.Println("addr2", avaxAddr2, addr2bal, addr2.String())
+	log.Println("addr", addr1bal, pkInfo.Caddr)
 	log.Println("contract balance", rContractBal)
 
 	// debug the call it won't revert and the contract balance has increased.
