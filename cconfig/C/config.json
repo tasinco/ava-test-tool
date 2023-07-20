@@ -10,5 +10,17 @@
   "debug-api-enabled": true,
   "tx-pool-api-enabled": true,
   "api-max-duration": 0,
-  "personal-api-enabled": false
+  "personal-api-enabled": false,
+  "eth-apis": [
+    "eth",
+    "eth-filter",
+    "net",
+    "web3",
+    "internal-eth",
+    "internal-debug",
+    "debug-tracer",
+    "internal-blockchain",
+    "internal-transaction",
+    "debug"
+  ]
 }
