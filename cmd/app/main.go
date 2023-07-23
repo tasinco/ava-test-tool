@@ -18,11 +18,10 @@ import (
 )
 
 const (
-	baseDir   = "/tmp/t"
-	baseDB    = baseDir + "/db"
-	baseLogs  = baseDir + "/logs"
-	pluginDir = "./"
-	certs     = "./certs/"
+	baseDir  = "/tmp/t"
+	baseDB   = baseDir + "/db"
+	baseLogs = baseDir + "/logs"
+	certs    = "./certs/"
 )
 
 func main() {
@@ -205,7 +204,6 @@ type Flags struct {
 	PublicIP        string
 	DynamicPublicIP string
 
-	// Network ID
 	NetworkID string
 
 	// APIs
