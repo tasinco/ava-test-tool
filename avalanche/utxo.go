@@ -2,6 +2,7 @@ package avalanche
 
 import (
 	"context"
+
 	"github.com/ava-labs/avalanchego/ids"
 	"github.com/ava-labs/avalanchego/utils/rpc"
 	"github.com/ava-labs/avalanchego/vms/avm"

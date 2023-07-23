@@ -3,6 +3,7 @@ package avalanche
 import (
 	"errors"
 	"fmt"
+
 	"github.com/ava-labs/avalanchego/codec"
 	"github.com/ava-labs/avalanchego/genesis"
 	"github.com/ava-labs/avalanchego/ids"
@@ -18,9 +19,7 @@ import (
 	"github.com/ava-labs/avalanchego/vms/secp256k1fx"
 )
 
-var (
-	ErrIncorrectGenesisChainTxType = errors.New("incorrect genesis chain tx type")
-)
+var ErrIncorrectGenesisChainTxType = errors.New("incorrect genesis chain tx type")
 
 type Genesis struct {
 	Bytes           []byte

@@ -2,10 +2,11 @@ package avalanche
 
 import "C"
 import (
+	"strings"
+
 	"github.com/ava-labs/avalanchego/api/info"
 	"github.com/ava-labs/avalanchego/vms/avm"
 	"github.com/ava-labs/coreth/plugin/evm"
-	"strings"
 )
 
 type Client struct {
@@ -15,7 +16,6 @@ type Client struct {
 }
 
 func NewClient(addr string) *Client {
-
 	addr = strings.TrimPrefix(addr, "/")
 
 	return &Client{
