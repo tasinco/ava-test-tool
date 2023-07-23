@@ -11,7 +11,6 @@ import (
 	"github.com/ava-labs/avalanchego/vms/avm/fxs"
 	avmtxs "github.com/ava-labs/avalanchego/vms/avm/txs"
 	"github.com/ava-labs/avalanchego/vms/nftfx"
-	"github.com/ava-labs/avalanchego/vms/platformvm"
 	"github.com/ava-labs/avalanchego/vms/platformvm/blocks"
 	platformgenesis "github.com/ava-labs/avalanchego/vms/platformvm/genesis"
 	platformtxs "github.com/ava-labs/avalanchego/vms/platformvm/txs"
@@ -21,13 +20,13 @@ import (
 
 var ErrIncorrectGenesisChainTxType = errors.New("incorrect genesis chain tx type")
 
+// Genesis the genesis components
 type Genesis struct {
 	Bytes           []byte
 	AvaxAssetID     ids.ID
 	Platform        *platformgenesis.Genesis
 	Chains          map[ids.ID]*platformtxs.CreateChainTx
 	ChainsByStr     map[string]*platformtxs.CreateChainTx
-	PlatformVM      *platformvm.VM
 	AvmCodec        codec.Manager
 	PlatformvmCodec codec.Manager
 	AvmParser       avmtxs.Parser
@@ -37,6 +36,7 @@ type Genesis struct {
 	EVMChainTX      *platformtxs.Tx
 }
 
+// NewGenesis fetch and parse the genesis into components.
 func NewGenesis(networkID uint32) (g *Genesis, err error) {
 	g = &Genesis{}
 

@@ -9,6 +9,7 @@ import (
 	"github.com/ava-labs/coreth/plugin/evm"
 )
 
+// EvmUtxos fetch all spendable utxos from atomic space (importable to c-chain)
 func EvmUtxos(ctx context.Context, client evm.Client, sourceChainID ids.ID, addrs []string, fetchLimit uint32) (utxos map[ids.ID]*UTXOContainer, err error) {
 	var (
 		sourceChainIDStr = sourceChainID.String()
