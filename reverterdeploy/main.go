@@ -16,7 +16,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/rpc"
-	avaprvatekey "github.com/tasinco/ava-test-tool/avalanche/privatekey"
+	"github.com/tasinco/ava-test-tool/avalanche"
 	"github.com/tasinco/ava-test-tool/contracts/reverter"
 	"github.com/tasinco/ava-test-tool/ethcalls"
 )
@@ -37,10 +37,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	pkInfo, err := avaprvatekey.DecodeB32("PrivateKey-ewoqjP7PxY4yr3iLTpLisriqt94hdyDFNgchSxGGztUrTXtNN", constants.LocalID)
-	if err != nil {
-		log.Fatal(err)
-	}
+	pkInfo := avalanche.LocalNetPrivateKeys[0]
 
 	// check balances
 	addr1bal, err := ethClnt.BalanceAt(ctx, pkInfo.Caddr, nil)
