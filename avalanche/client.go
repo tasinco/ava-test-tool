@@ -1,6 +1,5 @@
 package avalanche
 
-import "C"
 import (
 	"strings"
 
